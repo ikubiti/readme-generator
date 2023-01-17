@@ -40,7 +40,7 @@ function main() {
 
 
 initProject.init = async () => {
-	console.log(utility.fontCyan("Let's get your README.md file generated!!!"));
+	console.log(utility.fontCyan("\nWelcome to the Professional README.md Generator!\nLet's get to it!!!\n"));
 
 	const initialProj = await main();
 	console.log(initialProj);

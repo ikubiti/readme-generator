@@ -96,6 +96,7 @@ utility.inputType = (value, section) => {
 utility.note = (value, inputType) => {
 	const content = !value ? 'multiText' : value;
 	// const soFar = answers[inputType];
+	// console.log(soFar);
 
 	const newQuestion = {
 		type: 'editor',
