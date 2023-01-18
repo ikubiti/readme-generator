@@ -18,4 +18,15 @@ function generateMarkdown(data) {
 `;
 }
 
-module.exports = generateMarkdown;
+function formatTitle(data, level = 1) {
+  if (level > 3) level = 3;
+  const titleAddon = new Array(level);
+  titleAddon.fill("#");
+
+  return titleAddon.join("") + " " + data + "\n";
+}
+
+module.exports = {
+  generateMarkdown: generateMarkdown,
+  formatTitle: formatTitle,
+};

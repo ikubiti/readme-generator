@@ -56,14 +56,34 @@ utility.checkInput = (value) => {
 	return 'Please enter some text!!!';
 };
 
+utility.getTitle = (section) => {
+	const aSection = !section ? 'subsection' : section;
+	const question = {
+		type: 'input',
+		name: 'title',
+		message: `Please enter the ${aSection} title?`,
+		validate: utility.checkInput,
+	};
+
+	return question;
+};
+
+// get a playbook for any section input
+utility.getSectionDetails = (section) => {
+	const newQuestion = {};
+	// type: 'input',
+
+	return newQuestion;
+}
+
 // Determines the input type and subsequent questions
-utility.inputType = (value, section) => {
-	const content = !value ? 'content' : value;
+utility.getInputType = (section) => {
+	// const content = !value ? 'content' : value;
 	const questionContent = !section ? "Select the input type?" : `Select the input type for section "${section}"?`;
 
 	const newQuestion = {
 		type: 'expand',
-		name: content,
+		name: 'inputType',
 		message: utility.fontYellow(questionContent),
 		choices: [
 			{
@@ -84,7 +104,7 @@ utility.inputType = (value, section) => {
 			{
 				key: 's',
 				name: 'Add a Subsection',
-				value: 'image',
+				value: 'subsection',
 			},
 		],
 	};
@@ -93,57 +113,60 @@ utility.inputType = (value, section) => {
 };
 
 // Get a note based on user input
-utility.note = (value, inputType) => {
-	const content = !value ? 'multiText' : value;
-	// const soFar = answers[inputType];
-	// console.log(soFar);
-
+utility.getNote = (inputType) => {
+	// const content = !value ? 'multiText' : value;
 	const newQuestion = {
 		type: 'editor',
-		name: content,
+		name: 'inputNote',
 		message: utility.fontYellow('Please add your content to this note!!'),
-		validate(text) {
-			if (text.split('\n').length < 3) {
-				return 'Must be at least 3 lines.';
-			}
-
-			return true;
-		},
+		validate: utility.checkInput,
 		waitUserInput: true,
-		when(answers) {
-			return answers[inputType] === 'note' || answers[inputType] === 'noteLink';
+		when() {
+			return inputType === 'note' || inputType === 'noteLink';
+		}
+
+	};
+
+	return newQuestion;
+};
+
+// Get all the link texts from the user's input
+utility.getNoteLinks = (inputType, note) => {
+	let content = utility.fontYellow('Enter all link texts separated by a comma.');
+	content += utility.fontPurple(`\n${note}`);
+	const newQuestion = {
+		type: 'input',
+		name: 'noteLink',
+		message: content,
+		validate: utility.checkInput,
+		waitUserInput: true,
+		when() {
+			return inputType === 'noteLink';
 		}
 
 	};
 	return newQuestion;
 };
 
-// const questions = [
-// 	{
-// 		type: 'input',
-// 		name: 'userName',
-// 		message: 'What is your name?',
-// 		validate: checkInput,
-// 	},
-// 	{
-// 		type: 'input',
-// 		name: 'language',
-// 		message: "What languages do you know?",
-// 		validate: checkInput,
-// 	},
-// 	{
-// 		type: 'input',
-// 		name: 'preferredMethod',
-// 		message: 'What is your preferred method of communication??',
-// 		validate: checkInput,
-// 	},
-// ];
 
-// inquirer.prompt(questions).then((answers) => {
-// 	// Write result to file and the console
-// 	fs.appendFile(fileName, `${JSON.stringify(answers)}\n`, (err) =>
-// 		err ? console.error(err) : console.log(answers)
-// 	);
-// });
+utility.getLinks = (noteLinks) => {
+	const questions = [];
+	for (let i = 0; i < noteLinks.length; i++) {
+		let prompt = fontYellow(`Please the link associated with ${noteLinks[i]}`);
+		questions.push(
+			{
+				type: 'input',
+				name: noteLinks[i],
+				message: prompt,
+				validate: utility.checkInput
+			}
+		);
+	}
+
+	return questions;
+}
+
+
+
 
 module.exports = utility;
