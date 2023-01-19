@@ -77,8 +77,56 @@ function decider(index, answer) {
 async function getProjectTitle() {
 	let proTitle = await prompt(utility.getTitle('project')).then((answer) => answer);
 	projectTitle = markDown.formatTitle(proTitle.title.toUpperCase());
-	console.log(proTitle);
-	console.log(projectTitle);
+}
+
+async function getSections(customType = 'addMore') {
+	let allSections = await prompt(utility.getCustomSections(customType)).then((answer) => {
+		let newSections = [];
+		answer.custom.split(',').forEach(section => {
+			let newSection = section.trim();
+			if (newSection.trim().length > 0) {
+				newSections.push(utility.capitalizeFirstLetter(newSection));
+			}
+		});
+
+		return newSections;
+	});
+
+	let limit = customType === 'addMore' ? 1 : 3;
+	if (allSections.length < limit) {
+		console.log(utility.fontRed(`\nPlease enter at least ${limit} sections\n`));
+		return await getSections(customType);
+	}
+
+
+	return allSections;
+}
+
+// Get the README table of contents
+async function getTableOfContents() {
+	let { tableOfContents } = await prompt(utility.getTableOfContents()).then((answer) => answer);
+
+	if (tableOfContents.includes('Add more sections')) {
+		let newSections = await getSections();
+		tableOfContents.pop();
+		let index = tableOfContents.indexOf('License');
+		newSections.forEach(section => {
+			if (!tableOfContents.includes(section)) {
+				if (index === -1) {
+					tableOfContents.push(section);
+				} else {
+					tableOfContents.splice(index, 0, section);
+					index++;
+				}
+			}
+		});
+	}
+
+	if (tableOfContents.includes('Create Custom Table of Contents')) {
+		tableOfContents = await getSections(true);
+	}
+
+	return tableOfContents;
 }
 
 async function subMain(question) {
@@ -87,11 +135,12 @@ async function subMain(question) {
 }
 
 // Write result to file and the console
-async function main() {
-	while (askAgain) {
-		let anAnswer = await subMain(questions[key]);
-		decider(i, anAnswer);
-	}
+async function main(tableOfContents) {
+	console.log(tableOfContents);
+	// while (askAgain) {
+	// 	let anAnswer = await subMain(questions[key]);
+	// 	decider(i, anAnswer);
+	// }
 
 	// for (let i = 0; i < questions.length; i++) {
 	// 	let anAnswer = await subMain(questions[i]);
@@ -106,7 +155,9 @@ initProject.getTemplate = async () => {
 
 	await getProjectTitle();
 
-	// await main();
+	let tableContent = await getTableOfContents();
+
+	await main(tableContent);
 
 	// //	const initialProj = await main();
 	// //	console.log(initialProj);
