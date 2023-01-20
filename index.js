@@ -1,29 +1,19 @@
-// TODO: Include packages needed for this application
+// Include packages needed for this application
 const fs = require('fs');
 const appMain = require('./utils/appReadMe');
-const readMeFile = './utils/README.md';
+const readMeFile = './README1.md';
 
-// TODO: Create an array of questions for user input
-const questions = [];
+const path = require('path');
 
-// TODO: Create a function to write README file
+// Write to the README file
 function writeToFile(fileName, data) {
 	fs.writeFile(fileName, data, (err) =>
 		err ? console.log(err) : console.log("Your professional grade README file is ready!")
 	);
 }
 
-// TODO: Create a function to initialize app
+// Initializes and creates README template
 async function init() {
-	// const data = {
-	// 	title: 'README Generator',
-	// 	description: '',
-	// 	installation: '',
-	// };
-
-	// const textData = markDown(data);
-	// console.log(textData);
-
 	let readMeData = await appMain.getTemplate();
 	writeToFile(readMeFile, readMeData);
 }

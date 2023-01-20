@@ -1,11 +1,13 @@
 // Importing all required modules
 const inquirer = require('inquirer');
-// const checkbox = require('inquirer-checkbox-plus');
+const fs = require('fs');
+const path = require('path');
 
-// const fs = require('fs');
-
+// The object returned by this module
 const utility = {};
+const imagePath = './images/';
 
+// display messages in preferred colors to user to gain attention
 function fontColor(color, text) {
 	if (!text) return '';
 
@@ -46,10 +48,6 @@ const tableContents = [
 		checked: true,
 	},
 	{
-		name: 'Table of Contents',
-		checked: true,
-	},
-	{
 		name: 'Installation',
 		checked: true,
 	},
@@ -61,20 +59,16 @@ const tableContents = [
 		checked: true,
 	},
 	{
-		name: 'How to Contribute',
+		name: 'Contributing',
+		checked: true,
 	},
 	{
 		name: 'Tests',
+		checked: true,
 	},
 	{
 		name: 'Credits',
-		checked: true,
 	},
-	{
-		name: 'License',
-		checked: true,
-	},
-
 	new inquirer.Separator(' = ReadMe Customization ='),
 	{
 		name: 'Add more sections',
@@ -83,6 +77,14 @@ const tableContents = [
 		name: 'Create Custom Table of Contents',
 	},
 ];
+
+utility.getImageFiles = async () => {
+	try {
+		return await fs.promises.readdir(imagePath);
+	} catch (err) {
+		console.error('Error occurred while reading directory!', err);
+	}
+};
 
 // render text in preferred color
 utility.fontRed = (text) => fontColor('red', text);
@@ -104,6 +106,24 @@ utility.checkInput = (value) => {
 	return utility.fontRed('Please enter some text!!!');
 };
 
+utility.matchDataInput = (note, text) => {
+	let answer = [];
+	if (!text || text.trim().length === 0) {
+		return answer;
+	}
+
+	let allLinks = text.split(',');
+	allLinks.forEach(link => {
+		let alink = link.trim();
+		const regex = new RegExp(`${alink}`, '');
+		if (alink.length > 0 && note.match(regex)) {
+			answer.push(alink);
+		}
+	});
+
+	return answer;
+};
+
 // Checks custom selection of table of contents
 utility.checkCustomSelection = (answer) => {
 	if (answer.length < 3) {
@@ -117,7 +137,8 @@ utility.checkCustomSelection = (answer) => {
 
 utility.capitalizeFirstLetter = (text) => {
 	let sentence = [];
-	text.split(' ').forEach(word => {
+	let title = text.toLowerCase();
+	title.split(' ').forEach(word => {
 		let newWord = word.trim();
 		if (newWord.length > 0) {
 			sentence.push(word.charAt(0).toUpperCase() + word.slice(1));
@@ -163,35 +184,24 @@ utility.getCustomSections = (userPrompt) => {
 	};
 };
 
-
-/////////////////////////////////////////////////////////////////////////
-
-// get a playbook for any section input
-utility.getSectionDetails = (section) => {
-	const newQuestion = {};
-	// type: 'input',
-
-	return newQuestion;
-}
-
 // Determines the input type and subsequent questions
-utility.getInputType = (section) => {
-	// const content = !value ? 'content' : value;
-	const questionContent = !section ? "Select the input type?" : `Select the input type for section "${section}"?`;
+utility.getInputType = (section) => {	// const content = !value ? 'content' : value;
+	let question = `Press "h" for help\n`;
+	question += !section ? "Select the input type?" : `Select the input type for section "${section}"?`;
 
 	const newQuestion = {
 		type: 'expand',
 		name: 'inputType',
-		message: utility.fontYellow(questionContent),
+		message: utility.fontYellow(question),
 		choices: [
 			{
 				key: 'n',
-				name: 'A Note without links',
+				name: 'A paragraph without links',
 				value: 'note',
 			},
 			{
 				key: 'l',
-				name: 'A Note with links',
+				name: 'A paragraph with links',
 				value: 'noteLink',
 			},
 			{
@@ -204,6 +214,11 @@ utility.getInputType = (section) => {
 				name: 'Add a Subsection',
 				value: 'subsection',
 			},
+			{
+				key: 'x',
+				name: 'Exit this section',
+				value: 'exit',
+			},
 		],
 	};
 
@@ -211,37 +226,27 @@ utility.getInputType = (section) => {
 };
 
 // Get a note based on user input
-utility.getNote = (inputType) => {
-	// const content = !value ? 'multiText' : value;
+utility.getNote = () => {
 	const newQuestion = {
 		type: 'editor',
 		name: 'inputNote',
-		message: utility.fontYellow('Please add your content to this note!!'),
+		message: utility.fontGreen('Please add your content to this note!!'),
 		validate: utility.checkInput,
 		waitUserInput: true,
-		when() {
-			return inputType === 'note' || inputType === 'noteLink';
-		}
-
 	};
 
 	return newQuestion;
 };
 
 // Get all the link texts from the user's input
-utility.getNoteLinks = (inputType, note) => {
-	let content = utility.fontYellow('Enter all link texts separated by a comma.');
+utility.getNoteLinks = (note) => {
+	let content = utility.fontYellow('Enter all link display texts separated by a comma.');
 	content += utility.fontPurple(`\n${note}`);
 	const newQuestion = {
 		type: 'input',
-		name: 'noteLink',
+		name: 'links',
 		message: content,
-		validate: utility.checkInput,
 		waitUserInput: true,
-		when() {
-			return inputType === 'noteLink';
-		}
-
 	};
 	return newQuestion;
 };
@@ -250,7 +255,7 @@ utility.getNoteLinks = (inputType, note) => {
 utility.getLinks = (noteLinks) => {
 	const questions = [];
 	for (let i = 0; i < noteLinks.length; i++) {
-		let prompt = fontYellow(`Please the link associated with ${noteLinks[i]}`);
+		let prompt = utility.fontYellow(`Please the link associated with "${utility.fontPurple(noteLinks[i])}"`);
 		questions.push(
 			{
 				type: 'input',
@@ -264,7 +269,33 @@ utility.getLinks = (noteLinks) => {
 	return questions;
 }
 
+// get a playbook for any section input
+utility.getImageDetails = async () => {
+	let files = await utility.getImageFiles();
+	const questions = [
+		{
+			type: 'input',
+			name: 'displayText',
+			message: utility.fontYellow('Enter the display text for the image'),
+			validate: utility.checkInput,
+			waitUserInput: true,
+		},
+		{
+			type: 'list',
+			name: 'fullPath',
+			message: 'Type name of image file or navigate to select the image file:',
+			choices: files,
+			filter(val) {
+				newValue = val.replace(/ /g, '%20');
+				return imagePath + newValue;
+			}
+		}
+	];
+
+	return questions;
+}
 
 
 
+// Export the utility API functions
 module.exports = utility;
