@@ -1,7 +1,7 @@
 // Include packages needed for this application
 const fs = require('fs');
 const appMain = require('./utils/appReadMe');
-const readMeFile = './README1.md';
+const readMeFile = './README.md';
 
 // Write to the README file
 function writeToFile(fileName, data) {

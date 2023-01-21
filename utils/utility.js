@@ -59,11 +59,11 @@ const tableContents = [
 		checked: true,
 	},
 	{
-		name: 'Features',
-	},
-	{
 		name: 'Usage',
 		checked: true,
+	},
+	{
+		name: 'Features',
 	},
 	{
 		name: 'Contributing',
