@@ -38,7 +38,7 @@ async function createLicense(data, fileName) {
 
 // Returns a valid license link
 async function renderLicenseLink(data) {
-  const file = 'LICENSE1';
+  const file = 'LICENSE';
   // Check if the file exists in the current directory.
   try {
     await fs.promises.access(file);

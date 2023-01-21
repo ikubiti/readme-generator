@@ -104,5 +104,4 @@ dist
 .tern-port
 
 # specific files
-answerLog.txt
 *.code-workspace
