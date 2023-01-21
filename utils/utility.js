@@ -99,7 +99,12 @@ utility.fontGray = (text) => fontColor('gray', text);
 
 // check for empty inputs
 utility.checkInput = (value) => {
-	if (value.trim() || value.trim().length > 0) {
+	let val = value;
+	if (value instanceof Array) {
+		val = value.join(', ');
+	}
+
+	if (val.trim() || val.trim().length > 0) {
 		return true;
 	}
 
@@ -294,8 +299,6 @@ utility.getImageDetails = async () => {
 
 	return questions;
 }
-
-
 
 // Export the utility API functions
 module.exports = utility;

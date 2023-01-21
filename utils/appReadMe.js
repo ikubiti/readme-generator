@@ -6,117 +6,14 @@ const markDown = require('./generateMarkdown');
 
 const prompt = inquirer.createPromptModule();
 
+const initProject = {};
 let formatReadMe = [];
 let sectionContent = [];
-
 let projectTitle = '';
-let readMeBadge = '';
 let contentsTable = '';
+
+let readMeBadge = '';
 let readMeBody = '\n';
-
-const initProject = {};
-const inputData = {};
-let askAgain = true;
-let key = 'title';
-
-// const questions = [
-// 	{
-// 		type: 'input',
-// 		name: 'projectTitle',
-// 		message: 'Please enter the project title?',
-// 		validate: utility.checkInput,
-// 	},
-// 	// utility.inputType('theme', 'description'),
-// 	// utility.note(inputData.theme, 'descr'),
-// 	// {
-// 	// 	type: 'input',
-// 	// 	name: 'description',
-// 	// 	message: utility.fontBlue('Please provide the project description?'),
-// 	// 	validate: utility.checkInput,
-// 	// },
-// ];
-
-// const questions = {
-// 	title: utility.getTitle('project'),
-// 	description: utility.getSectionDetails('description'),
-// 	// installation: utility.getInstallation,
-// };
-
-function decider(index, answer) {
-	switch (index) {
-		case 0:
-			inputData.title = answer.projectTitle;
-			questions.push(utility.inputType('theme', 'description'));
-			break;
-
-		case 1:
-			inputData.theme = answer.theme;
-			questions.push(utility.note(inputData.theme, 'descr'));
-			break;
-
-		case 2:
-			inputData.description = !answer.descr ? '' : answer.descr;
-			questions.push(utility.noteLink(inputData.description, inputData.theme));
-			break;
-
-		case 3:
-			if (answer.noteLink) inputData.noteLink = answer.noteLink;
-			questions.push(
-				{
-					type: 'input',
-					name: 'description',
-					message: utility.fontBlue('Please provide the project description?'),
-					validate: utility.checkInput,
-				}
-			);
-			break;
-
-		case 4:
-			inputData.description1 = answer.description;
-			break;
-
-		default:
-	}
-}
-
-///////////////////////////////////////////////////////////////////////
-
-// function sectionControl(section, inputType) {
-// 	switch (inputType) {
-// 		case 'note':
-// 			inputData.title = answer.projectTitle;
-// 			questions.push(utility.inputType('theme', 'description'));
-// 			break;
-
-// 		case 1:
-// 			inputData.theme = answer.theme;
-// 			questions.push(utility.note(inputData.theme, 'descr'));
-// 			break;
-
-// 		case 2:
-// 			inputData.description = !answer.descr ? '' : answer.descr;
-// 			questions.push(utility.noteLink(inputData.description, inputData.theme));
-// 			break;
-
-// 		case 3:
-// 			if (answer.noteLink) inputData.noteLink = answer.noteLink;
-// 			questions.push(
-// 				{
-// 					type: 'input',
-// 					name: 'description',
-// 					message: utility.fontBlue('Please provide the project description?'),
-// 					validate: utility.checkInput,
-// 				}
-// 			);
-// 			break;
-
-// 		case 4:
-// 			inputData.description1 = answer.description;
-// 			break;
-
-// 		default:
-// 	}
-// }
 
 // Gets the project title from the user
 async function getProjectTitle() {
@@ -132,7 +29,7 @@ async function getSections(customType = 'addMore') {
 		let newSections = [];
 		answer.custom.split(',').forEach(section => {
 			let newSection = section.trim();
-			if (newSection.trim().length > 0) {
+			if (newSection.length > 0) {
 				newSections.push(utility.capitalizeFirstLetter(newSection));
 			}
 		});
@@ -149,15 +46,6 @@ async function getSections(customType = 'addMore') {
 
 	return allSections;
 }
-
-// {
-// 	name: 'Table of Contents',
-// 		checked: true,
-// 	},
-// {
-// 	name: 'License',
-// 		checked: true,
-// 	},
 
 // Get the README table of contents
 async function getTableOfContents() {
@@ -251,6 +139,7 @@ async function subMain(section) {
 
 // Write result to file and the console
 async function main(tableOfContents) {
+
 	for (let index = 0; index < tableOfContents.length; index++) {
 		let section = tableOfContents[index];
 		sectionContent = [];
@@ -264,6 +153,8 @@ async function main(tableOfContents) {
 		}
 		console.log(utility.fontGreen(`\n..."${section}" section successfully constructed...`));
 	}
+
+	// get info for Question and License sections
 }
 
 
@@ -279,9 +170,6 @@ initProject.getTemplate = async () => {
 
 	return formatReadMe.join('');
 };
-
-
-
 
 
 module.exports = initProject;
