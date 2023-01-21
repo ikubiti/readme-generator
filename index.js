@@ -3,7 +3,7 @@ const fs = require('fs');
 const appMain = require('./utils/appReadMe');
 const readMeFile = './README1.md';
 
-const path = require('path');
+// const path = require('path');
 
 // Write to the README file
 function writeToFile(fileName, data) {
