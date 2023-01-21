@@ -5,23 +5,16 @@ const utility = require('./utility');
 const markDown = require('./generateMarkdown');
 
 const prompt = inquirer.createPromptModule();
-
 const initProject = {};
 let formatReadMe = [];
 let sectionContent = [];
-let projectTitle = '';
-let contentsTable = '';
-
-let readMeBadge = '';
-let readMeBody = '\n';
 
 // Gets the project title from the user
 async function getProjectTitle() {
 	let proTitle = await prompt(utility.getTitle('project')).then((answer) => answer);
-	projectTitle = markDown.formatTitle(proTitle.title.toUpperCase(), 1);
+	let projectTitle = markDown.formatTitle(proTitle.title.toUpperCase(), 1);
 	formatReadMe.push(projectTitle);
 }
-
 
 // Processes the user's custom sections
 async function getSections(customType = 'addMore') {
@@ -78,12 +71,11 @@ async function getTableOfContents() {
 		tableOfContents.splice(tableOfContents.indexOf('Questions'), 1);
 	}
 
-	contentsTable = markDown.formatTableOfContents(tableOfContents);
-	// formatReadMe.push(contentsTable);
-	formatReadMe[2] = contentsTable;
+	formatReadMe[3] = markDown.formatTableOfContents(tableOfContents);
 	return tableOfContents;
 }
 
+// Attach links to sections
 async function processLinks(note) {
 	let { links } = await prompt(utility.getNoteLinks(note)).then((answer) => answer);
 	let allLinks = utility.matchDataInput(note, links);
@@ -108,6 +100,25 @@ async function getSubsectionTitle() {
 	console.log(utility.fontGreen(`\n..."${subTitle}" subsection successfully constructed...`));
 }
 
+// construct the miscellaneous sections
+async function generateMisc(data) {
+	const misc = {};
+
+	let licenseLink = await markDown.renderLicenseLink(data);
+
+	let title = 'License';
+	let content = `\nCopyright (c) ${data.github}. All rights reserved.\n\nLicensed under the [${data.license}](${licenseLink}) license.`;
+	misc.license = markDown.formatSection(title, content);
+	misc.badge = markDown.formatBadge(data);
+
+	title = 'Questions';
+	content = `\nIf you have any questions, please feel free to reach out to me at: [${data.email}](mailto:${data.email}).\n\nAlternatively, you may find my profile on GitHub at [https://github.com/${data.github}](https://github.com/${data.github}).\n\n---`;
+	misc.question = markDown.formatSection(title, content);
+
+	return misc;
+}
+
+// Control the generation of all section and sub-sectional contents
 async function subMain(section) {
 	let { inputType } = await prompt(utility.getInputType()).then((answers) => answers);
 	switch (inputType) {
@@ -147,7 +158,7 @@ async function main(tableOfContents) {
 		await subMain(section);
 		let sectionText = markDown.formatSection(section, sectionContent.join(''));
 		if (index === 0) {
-			formatReadMe[1] = sectionText;
+			formatReadMe[2] = sectionText;
 		} else {
 			formatReadMe.push(sectionText);
 		}
@@ -155,8 +166,12 @@ async function main(tableOfContents) {
 	}
 
 	// get info for Question and License sections
+	let miscInfo = await prompt(utility.getMiscInfo()).then((answer) => answer);
+	let finalSection = await generateMisc(miscInfo);
+	formatReadMe[1] = finalSection['badge'];
+	formatReadMe.push(finalSection['question']);
+	formatReadMe.push(finalSection['license']);
 }
-
 
 // returns the formatted read text for the README.md file
 initProject.getTemplate = async () => {
@@ -168,7 +183,7 @@ initProject.getTemplate = async () => {
 
 	await main(tableContent);
 
-	return formatReadMe.join('');
+	return markDown.generateMarkdown(formatReadMe);
 };
 
 

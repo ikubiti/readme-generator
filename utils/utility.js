@@ -7,6 +7,12 @@ const path = require('path');
 const utility = {};
 const imagePath = './images/';
 
+// Present a list of licenses to the user
+const licenses = [
+	'Apache license 2.0', 'GNU General Public License v3.0', 'MIT', 'BSD 2 - clause "Simplified" license', 'BSD 3 - clause "New" or "Revised" license', 'Boost Software License 1.0', 'Creative Commons Zero v1.0 Universal', 'Eclipse Public License 2.0', 'GNU Affero General Public License v3.0', 'GNU General Public License v2.0', 'GNU Lesser General Public License v2.1', 'Mozilla Public License 2.0', 'The Unlicense', 'Academic Free License v3.0', 'Artistic license 2.0', 'BSD 3 - clause Clear license',
+	'Creative Commons license family', 'Creative Commons Attribution 4.0', 'Creative Commons Attribution Share Alike 4.0', 'Do What The F * ck You Want To Public License', 'Educational Community License v2.0', 'Eclipse Public License 1.0', 'European Union Public License 1.1', 'GNU General Public License family', 'GNU Lesser General Public License family', 'GNU Lesser General Public License v3.0', 'ISC', 'LaTeX Project Public License v1.3c', 'Microsoft Public License', 'Open Software License 3.0', 'PostgreSQL License', 'SIL Open Font License 1.1', 'University of Illinois/NCSA Open Source License', 'zLib License'
+];
+
 // display messages in preferred colors to user to gain attention
 function fontColor(color, text) {
 	if (!text) return '';
@@ -41,6 +47,7 @@ function fontColor(color, text) {
 	}
 };
 
+// Standard Table of Contents Template for README
 const tableContents = [
 	new inquirer.Separator(' = The Standard Template = '),
 	{
@@ -78,6 +85,7 @@ const tableContents = [
 	},
 ];
 
+// Get all image files in the images directory
 utility.getImageFiles = async () => {
 	try {
 		return await fs.promises.readdir(imagePath);
@@ -111,6 +119,17 @@ utility.checkInput = (value) => {
 	return utility.fontRed('Please enter some text!!!');
 };
 
+// check for valid emails
+utility.checkEmail = (value) => {
+	let emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+	if (emailFormat.test(value.trim())) {
+		return true;
+	}
+
+	return utility.fontRed('Please provide a valid email!!!');
+};
+
+// Perform find and replace operations
 utility.matchDataInput = (note, text) => {
 	let answer = [];
 	if (!text || text.trim().length === 0) {
@@ -140,6 +159,7 @@ utility.checkCustomSelection = (answer) => {
 	return true;
 };
 
+// Capitalizes the first letter of every word in a string
 utility.capitalizeFirstLetter = (text) => {
 	let sentence = [];
 	let title = text.toLowerCase();
@@ -153,7 +173,7 @@ utility.capitalizeFirstLetter = (text) => {
 	return sentence.join(' ');
 }
 
-
+// Get the title of any section
 utility.getTitle = (section) => {
 	const aSection = !section ? 'subsection' : section;
 	return {
@@ -164,6 +184,7 @@ utility.getTitle = (section) => {
 	};
 };
 
+// Generate the prompt for adding the table of contents
 utility.getTableOfContents = () => {
 	return {
 		type: 'checkbox',
@@ -175,6 +196,7 @@ utility.getTableOfContents = () => {
 	};
 };
 
+// Generate the prompt for adding custom sections 
 utility.getCustomSections = (userPrompt) => {
 	let customPrompt = 'Enter the title of your custom sections separated by commas';
 	if (userPrompt === 'addMore') {
@@ -221,7 +243,7 @@ utility.getInputType = (section) => {	// const content = !value ? 'content' : va
 			},
 			{
 				key: 'x',
-				name: 'Exit this section',
+				name: 'Exit this section, if done with sectional entry',
 				value: 'exit',
 			},
 		],
@@ -256,7 +278,7 @@ utility.getNoteLinks = (note) => {
 	return newQuestion;
 };
 
-
+// Generate a playbook for attaching links to a note
 utility.getLinks = (noteLinks) => {
 	const questions = [];
 	for (let i = 0; i < noteLinks.length; i++) {
@@ -298,6 +320,48 @@ utility.getImageDetails = async () => {
 	];
 
 	return questions;
+}
+
+// Generate the playbook for the Questions and License sections
+utility.getMiscInfo = () => {
+	return [
+		{
+			type: 'list',
+			loop: true,
+			name: 'license',
+			message: 'Select a license you would like to include:',
+			choices: licenses,
+		},
+		{
+			type: 'input',
+			name: 'github',
+			message: "What's your GitHub username?",
+			validate: utility.checkInput,
+		},
+		{
+			type: 'input',
+			name: 'email',
+			message: "What's your email address?",
+			validate: utility.checkEmail
+		},
+		{
+			type: 'input',
+			name: 'stack',
+			message: "What's technology stack you used for this (comma separated data)?",
+			validate: utility.checkInput,
+			filter(val) {
+				let techs = [];
+				val.split(',').forEach(tech => {
+					let addTech = tech.trim();
+					if (addTech.length > 0) {
+						techs.push(addTech.charAt(0).toUpperCase() + addTech.slice(1));
+					}
+				});
+
+				return techs;
+			}
+		}
+	];
 }
 
 // Export the utility API functions

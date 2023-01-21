@@ -1,21 +1,57 @@
+// import the necessary modules
+const fs = require('fs');
 
-// TODO: Create a function that returns a license badge based on which license is passed in
-// If there is no license, return an empty string
-function renderLicenseBadge(license) { }
+// Data to assist in creation of badges
+const badgeColor = ['brightgreen', 'red', 'blue', 'blueviolet', 'ff69b4', '9cf'];
 
-// TODO: Create a function that returns the license link
-// If there is no license, return an empty string
-function renderLicenseLink(license) { }
+const symbols = ["✅", "🏅", "💯", "☑️", "✔️", "☕", "🎉"];
 
-// TODO: Create a function that returns the license section of README
-// If there is no license, return an empty string
-function renderLicenseSection(license) { }
+// Select a random symbol or color
+function getRandomFlag(source) {
+  return source[Math.floor(Math.random() * source.length)];
+}
 
-// TODO: Create a function to generate markdown for README
+// Generates the application's badge
+function formatBadge(data) {
+  let badge = `\n![license](https://img.shields.io/badge/License-${data.license}-${getRandomFlag(badgeColor)})`;
+
+  badge += ` ![github](https://img.shields.io/badge/Github-${data.github}-${getRandomFlag(badgeColor)})`;
+
+  data.stack.forEach(element => {
+    badge += ` ![stack](https://img.shields.io/badge/${element}-${getRandomFlag(symbols)}-${getRandomFlag(badgeColor)})`;
+  });
+
+  return badge + "\n";
+}
+
+// Create license file if it doesn't exist
+async function createLicense(data, fileName) {
+  let content = `\n${data.license}\n\nCopyright (c) ${data.github}. All rights reserved.\n\nLicensed under the ${data.license}]license.\n\nYou may visit https://choosealicense.com/licenses/ for more information.\n`;
+
+  try {
+    await fs.promises.writeFile(fileName, content);
+    console.log(`${fileName} file successfully created!`);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Returns a valid license link
+async function renderLicenseLink(data) {
+  const file = 'LICENSE1';
+  // Check if the file exists in the current directory.
+  try {
+    await fs.promises.access(file);
+  } catch (err) {
+    await createLicense(data, file);
+  }
+
+  return `./${file}`;
+}
+
+// Generate markdown for README
 function generateMarkdown(data) {
-  return `# ${data.title}
-
-`;
+  return data.join('');
 }
 
 // Formats all headings in the README file
@@ -32,6 +68,7 @@ function formatTitle(data, level = 2) {
   return title;
 }
 
+// formats the table of contents
 function formatTableOfContents(tableOfContents) {
   let content = [...tableOfContents];
   content.push('Questions');
@@ -47,10 +84,12 @@ function formatTableOfContents(tableOfContents) {
   return contentTable;
 }
 
+// formats each section of the README file
 function formatSection(title, content) {
   return `\n${formatTitle(title)}${content}\n`;
 }
 
+// formats links in any section of the README file
 function formatLinks(note, links) {
   let formNote = note;
   for (let link in links) {
@@ -62,10 +101,10 @@ function formatLinks(note, links) {
   return formNote;
 }
 
+// formats images in any section of the README file
 function formatImage(imageInfo) {
-  return `![${imageInfo.displayText}](${imageInfo.fullPath})`;
+  return `\n![${imageInfo.displayText}](${imageInfo.fullPath})`;
 }
-
 
 // Export the markdown functions that will generate the README formats
 module.exports = {
@@ -75,4 +114,6 @@ module.exports = {
   formatSection: formatSection,
   formatLinks: formatLinks,
   formatImage: formatImage,
+  renderLicenseLink: renderLicenseLink,
+  formatBadge: formatBadge,
 };
