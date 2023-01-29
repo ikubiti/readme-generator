@@ -105,3 +105,4 @@ dist
 
 # specific files
 *.code-workspace
+package-lock.json
