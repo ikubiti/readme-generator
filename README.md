@@ -1,6 +1,7 @@
 # PROFESSIONAL README GENERATOR
 
-![license](https://img.shields.io/badge/License-MIT-brightgreen) ![github](https://img.shields.io/badge/Github-ikubiti-red) ![stack](https://img.shields.io/badge/Javascript-☑️-blue) ![stack](https://img.shields.io/badge/Node-✔️-blueviolet) ![stack](https://img.shields.io/badge/Git-✔️-9cf)
+![license](https://img.shields.io/badge/License-MIT-red) ![github](https://img.shields.io/badge/Github-ikubiti-blueviolet) ![stack](https://img.shields.io/badge/Node-✅-brightgreen) ![stack](https://img.shields.io/badge/Javascript-✔️-red) ![stack](https://img.shields.io/badge/Git-✅-brightgreen)
+
 
 ## Description
 
@@ -8,14 +9,16 @@ This application is a time-saving tool for the developer to consistently reprodu
 
 THIS README.md FILE WAS CREATED WITH THIS APPLICATION!!
 
-My objectives for this application is based on the following user story and acceptance criteria;
+My objectives for this application is based on the following user story and acceptance criteria:
+
 
 ### User Story
 
 ```
 AS A developer
 I WANT a README generator
-SO THAT I can quickly create a professional README for a new project.
+SO THAT I can quickly create a professional README for a new project
+
 
 ```
 
@@ -36,9 +39,11 @@ THEN this is added to the section of the README entitled Questions, with a link 
 - WHEN I enter my email address
 THEN this is added to the section of the README entitled Questions, with instructions on how to reach me with additional questions
 - WHEN I click on the links in the Table of Contents
-THEN I am taken to the corresponding section of the README
+THEN I am taken to the corresponding section of the README.
+
 
 ```
+
 
 ## Table of Contents
 
@@ -55,50 +60,50 @@ THEN I am taken to the corresponding section of the README
 
 ## Installation
 
-All you need is a terminal and for now the application folder.
+To run this application, you need to have node.js installed on your computer. All packages and dependencies for running this application is found in the package.json file.
+To automatically install all the dependencies, run `npm install or npm i' in the root directory of this application.
+
 
 ## Usage
 
+The application will be invoked by using the following command in the root directory+:
+
+- node index.js
+
 Once invoked, please follow screen prompts to generate your README.md file.
-[The Professional README Generator](https://drive.google.com/file/d/1j3Ws8BgAs7qIYH_0QAcu5aHD3WVkIcox/view?usp=sharing) demonstration link also provides a demonstrates the application's usage. The README generated in the demo is included here as [README-demo.md](./README-demo.md)
+[The Professional README Generator](https://drive.google.com/file/d/1HclfOwS2eFKwIZRUbjL5CpTtda9Q_E41/view?usp=sharing) demonstration link also provides a demonstrates the application's usage.
+
 
 The images below shows some of the application's prompts and feedback.
 
-The application's introduction page.
 
 ![Application Introduction](./images/App-Intro1.png)
 
 The prompts for creating the table of contents.
 
+
 ![Create Table of Contents](./images/Title-TableOfContents-Prompt2.png)
 
 The prompt to create the Description section. These prompts are generic for any section.
 
-![Add Section content](./images/Section-prompts3.png)
 
-The application provides usage hints as the user makes a selection.
+![Add Section Content](./images/Section-prompts3.png)
 
-![Hints for app usage](./images/Section-Prompts-Selection4.png)
 
-The prompts for adding a subsection.
+![Hints being displayed for each prompt](./images/Section-Prompts-Selection4.png)
+
 
 ![Adding a subsection](./images/Add-Subsection5.png)
 
-The user selects to add an image.
-
 ![User selects to add an image](./images/add-image6.png)
-
-The prompts for adding an image.
 
 ![Prompt to add image](./images/add-image-prompt7.png)
 
-The user being prompted to select a license for the application.
+![User about to select a license](./images/Selecting-a-license8.png)
 
-![User about to select the MIT license](./images/Selecting-a-license8.png)
 
-The last prompts of the application asking for Github username and its exit message.
+![App successfully created the README file](./images/App-exit-message9.png)
 
-![App has successfully created the README file](./images/App-exit-message9.png)
 
 ## Features
 
@@ -110,13 +115,16 @@ In addition to fulfilling the above requirements, the application also has the f
 4.  The app applies some formatting to the titles of all the sections irrespective of the user's input.
 5.  The app generates a minimal LICENSE file if it doesn't already file.
 
+
 ## Contributing
 
 The user can add instructions for their application here. This section is optional and may be omitted by the user.
 
+
 ## Tests
 
 The user can add instructions for testing their application here. This application has no test presently but they will be added during revision.
+
 
 ## Questions
 
@@ -131,4 +139,3 @@ Alternatively, you may find my profile on GitHub at [https://github.com/ikubiti]
 Copyright (c) ikubiti. All rights reserved.
 
 Licensed under the [MIT](./LICENSE) license.
-

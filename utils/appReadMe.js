@@ -14,6 +14,7 @@ async function getProjectTitle() {
 	let proTitle = await prompt(utility.getTitle('project')).then((answer) => answer);
 	let projectTitle = markDown.formatTitle(proTitle.title.toUpperCase(), 1);
 	formatReadMe.push(projectTitle);
+	console.clear();
 }
 
 // Processes the user's custom sections
@@ -162,6 +163,8 @@ async function main(tableOfContents) {
 		} else {
 			formatReadMe.push(sectionText);
 		}
+
+		console.clear();
 		console.log(utility.fontGreen(`\n..."${section}" section successfully constructed...`));
 	}
 
